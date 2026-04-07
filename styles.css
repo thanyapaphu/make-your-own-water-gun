@@ -3,14 +3,14 @@
 }
 
 :root {
-  --page-bg: transparent;
+  --page-bg: #fffb00;
 }
 
 html,
 body {
   margin: 0;
   font-family: "Kameron", Georgia, serif;
-  background: transparent !important;
+  background: var(--page-bg) !important;
   color: #111;
   transition: background-color 220ms ease;
 }
