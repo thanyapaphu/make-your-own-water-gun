@@ -5,8 +5,19 @@
 body {
   margin: 0;
   font-family: "Kameron", Georgia, serif;
-  background: #111;
+  background: #fffb00;
   color: #111;
+}
+
+@media (min-width: 768px) {
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+    background: #fffb00;
+  }
 }
 
 .app {
