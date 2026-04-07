@@ -327,18 +327,6 @@ async function buildResultExportBlob() {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, EXPORT_WIDTH, EXPORT_HEIGHT);
 
-  // Draw top logo (:P) from the result page header
-  ctx.strokeStyle = "#000000";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(201 + xOffset, 37, 21, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.fillStyle = "#000000";
-  ctx.font = "600 30px Sora";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(":P", 201 + xOffset, 37);
-
   // Draw dynamic title from #result-title
   ctx.fillStyle = "#000000";
   ctx.font = "700 31px Kameron";
