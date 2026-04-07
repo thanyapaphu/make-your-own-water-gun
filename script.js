@@ -490,6 +490,14 @@ async function showCombinedResultWithFallback(key, pickedBody, pickedTank, picke
 function showScreen(key) {
   Object.values(screens).forEach((node) => node.classList.remove("active"));
   screens[key].classList.add("active");
+  syncPageBackground();
+}
+
+function syncPageBackground() {
+  const activeScreen = document.querySelector(".screen.active");
+  if (!activeScreen) return;
+  const frameBg = window.getComputedStyle(activeScreen).backgroundColor;
+  document.documentElement.style.setProperty("--page-bg", frameBg);
 }
 
 function renderChoices(containerId, items, selectedId, onSelect) {
@@ -616,6 +624,8 @@ document.getElementById("btn-preview-download").addEventListener("click", () => 
 document.getElementById("btn-preview-close").addEventListener("click", () => {
   closeSavePreview();
 });
+
+syncPageBackground();
 
 document.getElementById("btn-share").addEventListener("click", async () => {
   const text = "Send this to someone you love or hate... either way, they’ll have fun or feel exposed";

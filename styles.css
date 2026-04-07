@@ -2,21 +2,59 @@
   box-sizing: border-box;
 }
 
+:root {
+  --page-bg: transparent;
+}
+
+html,
 body {
   margin: 0;
   font-family: "Kameron", Georgia, serif;
-  background: #fffb00;
+  background: transparent !important;
   color: #111;
+  transition: background-color 220ms ease;
 }
 
 @media (min-width: 768px) {
   body {
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
     padding: 0;
-    background: #fffb00;
+  }
+
+  .app {
+    width: 100vw;
+    max-width: none;
+    min-height: 100vh;
+  }
+
+  .screen,
+  .screen.active {
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 767px) {
+  .app,
+  .screen,
+  .screen *,
+  .btn-secondary,
+  .btn-text,
+  .result-share-copy {
+    font-family: "Kameron", Georgia, serif !important;
+    color: #111 !important;
+  }
+
+  .title,
+  .title span {
+    font-family: "Bakbak One", "Arial Black", sans-serif !important;
+  }
+
+  .btn-primary,
+  .btn-primary * {
+    color: #fff !important;
   }
 }
 
@@ -25,7 +63,7 @@ body {
   max-width: 402px;
   min-height: 798px;
   margin: 0 auto;
-  background: #f5ef00;
+  background: transparent;
 }
 
 .screen {
@@ -89,6 +127,11 @@ body {
   background: #fffb00;
 }
 
+#screen-name,
+#screen-loading {
+  background: #fffb00;
+}
+
 #screen-welcome .logo {
   background: #fffb00;
   border: 0;
@@ -132,6 +175,8 @@ body {
   margin-right: auto;
   padding: 8px 10px;
   font-size: 14px;
+  font-family: "Kameron", Georgia, serif;
+  font-weight: 600;
   margin: 12px auto 18px;
   outline: none;
   background: #fff;
@@ -188,18 +233,11 @@ body {
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
-  transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+  transition: background-color 180ms ease, opacity 180ms ease;
 }
 
 .btn-primary:not(:disabled):hover {
   background: #0040ff;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
-}
-
-.btn-primary:not(:disabled):active {
-  transform: translateY(0);
-  box-shadow: none;
 }
 
 .btn-secondary {
@@ -223,19 +261,12 @@ body {
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
-  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  transition: border-color 180ms ease, color 180ms ease;
 }
 
 .btn-secondary:not(:disabled):hover {
   border-color: #0040ff;
   color: #0040ff;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-}
-
-.btn-secondary:not(:disabled):active {
-  transform: translateY(0);
-  box-shadow: none;
 }
 
 .btn-text {
@@ -254,7 +285,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  transition: color 180ms ease, transform 180ms ease;
+  transition: color 180ms ease;
 }
 
 .btn-text:not(:disabled):hover {
@@ -262,11 +293,6 @@ body {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
-  transform: translateY(-1px);
-}
-
-.btn-text:not(:disabled):active {
-  transform: translateY(0);
 }
 
 .btn-icon {
@@ -275,9 +301,9 @@ body {
   height: 20px;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
+  font-weight: 700;
   background: transparent;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
 }
 
@@ -306,6 +332,8 @@ body {
 .quiz-screen {
   background: #e4e4e4;
   min-height: 1319px;
+  color: #111;
+  font-family: "Kameron", Georgia, serif;
 }
 
 #screen-step1 {
@@ -536,6 +564,8 @@ body {
   cursor: pointer;
   box-shadow: none;
   transition: border-color 180ms ease, transform 180ms ease;
+  color: #111;
+  font-family: "Kameron", Georgia, serif;
 }
 
 .choice.selected {
@@ -584,6 +614,8 @@ body {
   margin: 0;
   font-size: 32px;
   line-height: 1;
+  color: #111;
+  font-family: "Kameron", Georgia, serif;
 }
 
 .choice-desc {
@@ -592,6 +624,7 @@ body {
   line-height: 1.25;
   font-weight: 500;
   color: #111;
+  font-family: "Kameron", Georgia, serif;
 }
 
 .center {
@@ -744,11 +777,15 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 #save-preview-image {
   width: 100%;
   height: auto;
+  max-height: 70vh;
+  object-fit: contain;
   border-radius: 8px;
   display: block;
 }
