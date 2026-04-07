@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Make Your Own Water Gun</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bakbak+One&family=Kameron:wght@400;500;600;700&family=Sora:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section id="screen-welcome" class="screen active">
+        <div class="logo">
+          <img src="./illus/PP_Logo2024.svg" alt="PP Logo" class="logo-svg" />
+        </div>
+        <h1 class="title">
+          <span>MAKE</span>
+          <span>YOUR</span>
+          <span>OWN</span>
+          <span>WATER</span>
+          <span>GUN</span>
+        </h1>
+        <img src="./illus/Cover image.png" alt="Water gun cover" class="hero-image" />
+        <button id="btn-start" class="btn-primary">
+          <span class="btn-label">Let’s gooooo</span>
+          <span class="btn-icon" aria-hidden="true">→</span>
+        </button>
+      </section>
+
+      <section id="screen-name" class="screen">
+        <div class="logo">
+          <img src="./illus/PP_Logo2024.svg" alt="PP Logo" class="logo-svg" />
+        </div>
+        <h1 class="title">
+          <span>MAKE</span>
+          <span>YOUR</span>
+          <span>OWN</span>
+          <span>WATER</span>
+          <span>GUN</span>
+        </h1>
+        <label for="player-name" class="label">Type your name 👇🏼</label>
+        <input id="player-name" class="input" type="text" placeholder="Your name" maxlength="24" />
+        <button id="btn-name-next" class="btn-primary" disabled>
+          <span class="btn-label">Next</span>
+          <span class="btn-icon" aria-hidden="true">→</span>
+        </button>
+      </section>
+
+      <section id="screen-step1" class="screen quiz-screen">
+        <div class="logo">
+          <img src="./illus/PP_Logo2024.svg" alt="PP Logo" class="logo-svg" />
+        </div>
+        <h2 class="step-title">Step1</h2>
+        <p class="step-subtitle">Select your water gun!</p>
+        <div id="choices-step1" class="choices"></div>
+        <button id="btn-step1-next" class="btn-primary" disabled>
+          <span class="btn-label">Next</span>
+          <span class="btn-icon" aria-hidden="true">→</span>
+        </button>
+      </section>
+
+      <section id="screen-step2" class="screen quiz-screen">
+        <div class="logo">
+          <img src="./illus/PP_Logo2024.svg" alt="PP Logo" class="logo-svg" />
+        </div>
+        <h2 class="step-title">Step2</h2>
+        <p class="step-subtitle">Select your water tank!</p>
+        <div id="choices-step2" class="choices"></div>
+        <button id="btn-step2-next" class="btn-primary" disabled>
+          <span class="btn-label">Next</span>
+          <span class="btn-icon" aria-hidden="true">→</span>
+        </button>
+      </section>
+
+      <section id="screen-step3" class="screen quiz-screen">
+        <div class="logo">
+          <img src="./illus/PP_Logo2024.svg" alt="PP Logo" class="logo-svg" />
+        </div>
+        <h2 class="step-title">Step3</h2>
+        <p class="step-subtitle">Select your gun accessories!</p>
+        <div id="choices-step3" class="choices"></div>
+        <button id="btn-step3-next" class="btn-primary" disabled>
+          <span class="btn-label">Next</span>
+          <span class="btn-icon" aria-hidden="true">→</span>
+        </button>
+      </section>
+
+      <section id="screen-loading" class="screen center">
+        <div class="logo">
+          <img src="./illus/PP_Logo2024.svg" alt="PP Logo" class="logo-svg" />
+        </div>
+        <p class="loading-text">Building your water gun...</p>
+      </section>
+
+      <section id="screen-result" class="screen">
+        <div class="logo">
+          <img src="./illus/PP_Logo2024.svg" alt="PP Logo" class="logo-svg" />
+        </div>
+        <h2 id="result-title" class="result-title">Your Water Gun</h2>
+        <div class="result-pack">
+          <div class="result-canvas">
+            <img id="result-bg" src="./illus/result-bg.png" alt="Packaging background" />
+            <img id="result-body" alt="Body part" />
+            <img id="result-tank" alt="Tank part" />
+            <img id="result-acc" alt="Accessory part" />
+          </div>
+        </div>
+        <p id="result-copy" class="result-copy"></p>
+        <div class="result-actions">
+          <button id="btn-save" class="btn-primary">
+            <span class="btn-label">Save to gallery</span>
+            <span class="btn-icon" aria-hidden="true">↓</span>
+          </button>
+          <button id="btn-restart" class="btn-secondary">
+            <span class="btn-label">Make it yours</span>
+            <span class="btn-icon" aria-hidden="true">→</span>
+          </button>
+        </div>
+        <div class="result-share-group">
+          <button id="btn-share" class="btn-text">
+            <span class="btn-label">Share</span>
+            <span class="btn-icon" aria-hidden="true">🚀</span>
+          </button>
+          <p class="result-share-copy">
+            Send this to someone you love or hate...
+            <br />
+            either way, they’ll have fun or feel exposed
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div id="save-preview-modal" class="save-preview-modal" aria-hidden="true">
+      <div class="save-preview-panel">
+        <img id="save-preview-image" alt="Saved result preview" />
+        <div class="save-preview-actions">
+          <button id="btn-preview-download" class="btn-primary">Download</button>
+          <button id="btn-preview-close" class="btn-secondary">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
