@@ -753,21 +753,29 @@ syncPageBackground();
 const SHARE_GAME_URL = "https://make-your-own-water-gun.vercel.app/";
 let shareCopyResetTimer;
 
-function copyTextToClipboard(text) {
+/** Copies plain text; tries async Clipboard API first, then execCommand for older / iOS Safari. */
+async function copyTextToClipboard(text) {
   if (navigator.clipboard && window.isSecureContext) {
-    return navigator.clipboard.writeText(text);
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      /* fall through — e.g. permission denied */
+    }
   }
-  return new Promise((resolve, reject) => {
+
+  await new Promise((resolve, reject) => {
     const ta = document.createElement("textarea");
     ta.value = text;
-    ta.setAttribute("readonly", "");
-    ta.style.position = "fixed";
-    ta.style.left = "-9999px";
+    ta.style.cssText =
+      "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;opacity:0";
     document.body.appendChild(ta);
+    ta.focus();
     ta.select();
+    ta.setSelectionRange(0, text.length);
     try {
       if (document.execCommand("copy")) resolve();
-      else reject(new Error("copy failed"));
+      else reject(new Error("execCommand copy failed"));
     } catch (err) {
       reject(err);
     } finally {
@@ -779,7 +787,7 @@ function copyTextToClipboard(text) {
 document.getElementById("btn-share").addEventListener("click", async () => {
   const btn = document.getElementById("btn-share");
   const label = btn.querySelector(".btn-label");
-  const defaultText = "Share";
+  const defaultText = "Copy link";
   const copiedText = "Link copied!";
 
   try {
@@ -795,7 +803,7 @@ document.getElementById("btn-share").addEventListener("click", async () => {
 
   shareCopyResetTimer = setTimeout(() => {
     if (label) label.textContent = defaultText;
-    btn.setAttribute("aria-label", "Share game link");
+    btn.setAttribute("aria-label", "Copy game link to clipboard");
     shareCopyResetTimer = null;
   }, 2200);
 });
