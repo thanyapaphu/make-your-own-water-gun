@@ -5,6 +5,8 @@ const state = {
   acc: null
 };
 
+let analyticsSessionId = "";
+
 const screens = {
   welcome: document.getElementById("screen-welcome"),
   name: document.getElementById("screen-name"),
@@ -500,6 +502,110 @@ function syncPageBackground() {
   document.documentElement.style.setProperty("--page-bg", frameBg);
 }
 
+function getSupabaseRestConfig() {
+  const g = typeof window !== "undefined" ? window : {};
+  const url = String(g.SUPABASE_URL || "")
+    .trim()
+    .replace(/\/$/, "");
+  const key = String(g.SUPABASE_ANON_KEY || "").trim();
+  if (!url || !key) return null;
+  if (url.includes("YOUR_PROJECT_REF") || key === "YOUR_ANON_PUBLIC_KEY") return null;
+  return { url, key };
+}
+
+function supabaseRestInsert(table, row) {
+  const cfg = getSupabaseRestConfig();
+  if (!cfg) {
+    return Promise.resolve({ error: new Error("Supabase URL or anon key missing") });
+  }
+  const { url, key } = cfg;
+  return fetch(`${url}/rest/v1/${table}`, {
+    method: "POST",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal"
+    },
+    body: JSON.stringify(row)
+  }).then(async (res) => {
+    if (res.ok) return { error: null };
+    const text = await res.text().catch(() => "");
+    return { error: new Error(`${res.status} ${text || res.statusText}`) };
+  });
+}
+
+function ensureAnalyticsSession() {
+  if (analyticsSessionId) return;
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    analyticsSessionId = crypto.randomUUID();
+    return;
+  }
+  analyticsSessionId = `s${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
+/** Keeps state.name in sync with the input (autofill often skips the "input" event). */
+function syncPlayerNameFromInput() {
+  const el = document.getElementById("player-name");
+  if (!el) return "";
+  const value = String(el.value || "").trim().slice(0, 120);
+  state.name = value;
+  const btn = document.getElementById("btn-name-next");
+  if (btn) btn.disabled = value.length === 0;
+  return value;
+}
+
+function getPlayerNameForAnalytics() {
+  syncPlayerNameFromInput();
+  const n = (state.name || "").trim().slice(0, 120);
+  return n || null;
+}
+
+function recordStepPickToSupabase(step, stepName, choiceId, choiceTitle) {
+  if (!analyticsSessionId || !choiceId) return;
+  const name = getPlayerNameForAnalytics();
+  void supabaseRestInsert("water_gun_step_picks", {
+    session_id: analyticsSessionId,
+    step,
+    step_name: stepName,
+    choice_id: choiceId,
+    choice_title: choiceTitle || null,
+    player_name: name
+  })
+    .then(({ error }) => {
+      if (error) console.warn("[Supabase step]", error.message);
+    })
+    .catch((err) => {
+      console.warn("[Supabase step]", err);
+    });
+}
+
+function recordCompletionToSupabase() {
+  const name = getPlayerNameForAnalytics();
+  const pickedBody = bodyChoices.find((x) => x.id === state.body);
+  const pickedTank = tankChoices.find((x) => x.id === state.tank);
+  const pickedAcc = accChoices.find((x) => x.id === state.acc);
+  const comboKey = `${state.body}-${state.acc}-${state.tank}`;
+  const row = {
+    session_id: analyticsSessionId || null,
+    player_name: name,
+    body_id: state.body,
+    body_title: pickedBody?.title ?? null,
+    tank_id: state.tank,
+    tank_title: pickedTank?.title ?? null,
+    acc_id: state.acc,
+    acc_title: pickedAcc?.title ?? null,
+    combo_key: comboKey
+  };
+  void supabaseRestInsert("water_gun_completions", row)
+    .then(({ error }) => {
+      if (error) console.warn("[Supabase]", error.message);
+    })
+    .catch((err) => {
+      console.warn("[Supabase]", err);
+    });
+}
+
 function renderChoices(containerId, items, selectedId, onSelect) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -522,6 +628,7 @@ function renderChoices(containerId, items, selectedId, onSelect) {
 }
 
 async function updateResult() {
+  syncPlayerNameFromInput();
   const pickedBody = bodyChoices.find((x) => x.id === state.body);
   const pickedTank = tankChoices.find((x) => x.id === state.tank);
   const pickedAcc = accChoices.find((x) => x.id === state.acc);
@@ -537,8 +644,12 @@ async function updateResult() {
 }
 
 function openStep1() {
+  syncPlayerNameFromInput();
+  ensureAnalyticsSession();
   renderChoices("choices-step1", bodyChoices, state.body, (id) => {
     state.body = id;
+    const picked = bodyChoices.find((x) => x.id === id);
+    recordStepPickToSupabase(1, "body", id, picked?.title);
     document.getElementById("btn-step1-next").disabled = false;
     openStep1();
   });
@@ -548,6 +659,8 @@ function openStep1() {
 function openStep2() {
   renderChoices("choices-step2", tankChoices, state.tank, (id) => {
     state.tank = id;
+    const picked = tankChoices.find((x) => x.id === id);
+    recordStepPickToSupabase(2, "tank", id, picked?.title);
     document.getElementById("btn-step2-next").disabled = false;
     openStep2();
   });
@@ -557,19 +670,27 @@ function openStep2() {
 function openStep3() {
   renderChoices("choices-step3", accChoices, state.acc, (id) => {
     state.acc = id;
+    const picked = accChoices.find((x) => x.id === id);
+    recordStepPickToSupabase(3, "accessory", id, picked?.title);
     document.getElementById("btn-step3-next").disabled = false;
     openStep3();
   });
   showScreen("step3");
 }
 
-document.getElementById("btn-start").addEventListener("click", () => showScreen("name"));
+document.getElementById("btn-start").addEventListener("click", () => {
+  ensureAnalyticsSession();
+  showScreen("name");
+});
 
 const nameInput = document.getElementById("player-name");
 nameInput.addEventListener("input", (e) => {
   const value = e.target.value.trim();
   state.name = value;
   document.getElementById("btn-name-next").disabled = value.length === 0;
+});
+nameInput.addEventListener("change", () => {
+  syncPlayerNameFromInput();
 });
 
 document.getElementById("btn-name-next").addEventListener("click", () => openStep1());
@@ -581,10 +702,12 @@ document.getElementById("btn-step3-next").addEventListener("click", () => {
   setTimeout(async () => {
     await updateResult();
     showScreen("result");
+    recordCompletionToSupabase();
   }, 1000);
 });
 
 function resetToWelcome() {
+  analyticsSessionId = "";
   state.name = "";
   state.body = null;
   state.tank = null;

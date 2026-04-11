@@ -56,6 +56,12 @@ body {
   .btn-primary * {
     color: #fff !important;
   }
+
+  .btn-secondary:not(:disabled):hover,
+  .btn-secondary:not(:disabled):hover * {
+    color: #0040ff !important;
+    border-color: #0040ff !important;
+  }
 }
 
 .app {

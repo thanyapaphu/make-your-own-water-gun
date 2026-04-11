@@ -1,0 +1,3 @@
+# Static site: serve from repository root (index.html, assets, supabase-config.js).
+[build]
+  publish = "."
