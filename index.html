@@ -19,6 +19,65 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <script>
+      (function () {
+        var SHARE_URL = "https://make-your-own-water-gun.vercel.app/";
+        var resetTimer = null;
+
+        async function copyTextToClipboard(text) {
+          if (navigator.clipboard && window.isSecureContext) {
+            try {
+              await navigator.clipboard.writeText(text);
+              return;
+            } catch (e) {}
+          }
+          await new Promise(function (resolve, reject) {
+            var ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.cssText =
+              "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;opacity:0";
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            ta.setSelectionRange(0, text.length);
+            try {
+              if (document.execCommand("copy")) resolve();
+              else reject(new Error("copy"));
+            } catch (err) {
+              reject(err);
+            } finally {
+              document.body.removeChild(ta);
+            }
+          });
+        }
+
+        window.__waterGunCopyLink = async function (ev) {
+          if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+          }
+          var btn = document.getElementById("btn-copy-link");
+          if (!btn) return;
+          var label = btn.querySelector(".btn-label");
+          var defaultText = "Copy link";
+          var copiedText = "Link copied!";
+          try {
+            await copyTextToClipboard(SHARE_URL);
+          } catch (err) {
+            window.prompt("Copy this link:", SHARE_URL);
+            return;
+          }
+          if (resetTimer) clearTimeout(resetTimer);
+          if (label) label.textContent = copiedText;
+          btn.setAttribute("aria-label", "Game link copied to clipboard");
+          resetTimer = setTimeout(function () {
+            if (label) label.textContent = defaultText;
+            btn.setAttribute("aria-label", "Copy game link to clipboard");
+            resetTimer = null;
+          }, 2200);
+        };
+      })();
+    </script>
   </head>
   <body>
     <main class="app">
@@ -134,7 +193,13 @@
           </button>
         </div>
         <div class="result-share-group">
-          <button id="btn-copy-link" type="button" class="btn-text" aria-label="Copy game link to clipboard">
+          <button
+            id="btn-copy-link"
+            type="button"
+            class="btn-text"
+            aria-label="Copy game link to clipboard"
+            onclick="window.__waterGunCopyLink(event)"
+          >
             <span class="btn-label">Copy link</span>
             <span class="btn-icon" aria-hidden="true">📋</span>
           </button>
@@ -158,6 +223,6 @@
     </div>
 
     <script src="./supabase-config.js"></script>
-    <script src="./script.js?v=5"></script>
+    <script src="./script.js?v=6"></script>
   </body>
 </html>
