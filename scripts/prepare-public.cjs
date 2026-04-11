@@ -27,4 +27,11 @@ if (fs.existsSync(illus)) {
   console.warn("prepare-public: illus/ not found");
 }
 
+const resultPic = path.join(root, "result pic");
+if (fs.existsSync(resultPic)) {
+  fs.cpSync(resultPic, path.join(pub, "result pic"), { recursive: true });
+} else {
+  console.warn("prepare-public: result pic/ not found (combined result images may 404)");
+}
+
 console.log("Prepared", pub);
