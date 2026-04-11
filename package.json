@@ -2,7 +2,7 @@
   "name": "make-your-own-water-gun",
   "private": true,
   "scripts": {
-    "build": "node scripts/write-supabase-config.cjs",
+    "build": "node scripts/write-supabase-config.cjs && node scripts/prepare-public.cjs",
     "build:local": "node --env-file=.env scripts/write-supabase-config.cjs"
   }
 }

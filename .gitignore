@@ -3,3 +3,4 @@
 *.mov
 supabase-config.js
 node_modules/
+public/

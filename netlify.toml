@@ -2,4 +2,4 @@
 # (Netlify → Site configuration → Environment variables).
 [build]
   command = "npm run build"
-  publish = "."
+  publish = "public"
