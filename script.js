@@ -750,13 +750,52 @@ document.getElementById("btn-preview-close").addEventListener("click", () => {
 
 syncPageBackground();
 
-document.getElementById("btn-share").addEventListener("click", async () => {
-  const text = "Send this to someone you love or hate... either way, they’ll have fun or feel exposed";
-  if (navigator.share) {
-    try {
-      await navigator.share({ text });
-    } catch (err) {
-      // Share can be cancelled by the user.
-    }
+const SHARE_GAME_URL = "https://make-your-own-water-gun.vercel.app/";
+let shareCopyResetTimer;
+
+function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text);
   }
+  return new Promise((resolve, reject) => {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      if (document.execCommand("copy")) resolve();
+      else reject(new Error("copy failed"));
+    } catch (err) {
+      reject(err);
+    } finally {
+      document.body.removeChild(ta);
+    }
+  });
+}
+
+document.getElementById("btn-share").addEventListener("click", async () => {
+  const btn = document.getElementById("btn-share");
+  const label = btn.querySelector(".btn-label");
+  const defaultText = "Share";
+  const copiedText = "Link copied!";
+
+  try {
+    await copyTextToClipboard(SHARE_GAME_URL);
+  } catch (err) {
+    window.prompt("Copy this link:", SHARE_GAME_URL);
+    return;
+  }
+
+  if (shareCopyResetTimer) clearTimeout(shareCopyResetTimer);
+  if (label) label.textContent = copiedText;
+  btn.setAttribute("aria-label", "Game link copied to clipboard");
+
+  shareCopyResetTimer = setTimeout(() => {
+    if (label) label.textContent = defaultText;
+    btn.setAttribute("aria-label", "Share game link");
+    shareCopyResetTimer = null;
+  }, 2200);
 });
