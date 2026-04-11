@@ -1,3 +1,5 @@
-# Static site: serve from repository root (index.html, assets, supabase-config.js).
+# Static site. Build writes supabase-config.js from SUPABASE_URL + SUPABASE_ANON_KEY
+# (Netlify → Site configuration → Environment variables).
 [build]
+  command = "npm run build"
   publish = "."

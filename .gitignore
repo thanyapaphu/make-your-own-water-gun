@@ -1,3 +1,4 @@
 .env
 .DS_Store
 *.mov
+supabase-config.js
