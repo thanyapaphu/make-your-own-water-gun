@@ -2,3 +2,4 @@
 .DS_Store
 *.mov
 supabase-config.js
+node_modules/
