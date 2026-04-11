@@ -784,8 +784,11 @@ async function copyTextToClipboard(text) {
   });
 }
 
-document.getElementById("btn-share").addEventListener("click", async () => {
-  const btn = document.getElementById("btn-share");
+document.getElementById("btn-copy-link").addEventListener("click", async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const btn = document.getElementById("btn-copy-link");
   const label = btn.querySelector(".btn-label");
   const defaultText = "Copy link";
   const copiedText = "Link copied!";
